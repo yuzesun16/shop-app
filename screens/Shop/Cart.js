@@ -8,8 +8,9 @@ import {useSelector} from 'react-redux';
 
 const Cart = () => {
   const sumTotal = useSelector((state) => state.cart.sumTotal);
-  const cartItemList = [];
+
   const cartItem = useSelector((state) => {
+    const cartItemList = [];
     for (const key in state.cart.items) {
       cartItemList.push({
         prodId: key,
@@ -27,15 +28,14 @@ const Cart = () => {
       <View style={{height: '90%'}}>
         {/* <Text>{JSON.stringify(cartItemList)}</Text> */}
         <FlatList
-          data={cartItemList}
-          renderItem={({item}) => (
+          data={cartItem}
+          renderItem={(itemData) => (
             <View>
-              <Text>{item.prodQuantity}</Text>
-              <Text>{item.prodTitle}</Text>
-              <Text>{item.prodSum}</Text>
+              <Text>{itemData.item.prodQuantity}</Text>
+              <Text>{itemData.item.prodTitle}</Text>
+              <Text>{itemData.item.prodSum}</Text>
             </View>
           )}
-          keyExtractor={(item, index) => 'key' + index}
         />
       </View>
       <View style={styles.shadowContainer}>
