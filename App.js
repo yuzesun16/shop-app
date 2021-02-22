@@ -1,21 +1,54 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {StatusBar} from 'expo-status-bar';
+import React, {useState} from 'react';
+import {StyleSheet} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import ShopNavigator from './navigation/ShopNavigator';
+import {Provider} from 'react-redux';
+import {createStore, combineReducers} from 'redux';
+import productsReducer from './store/reducers/products';
+import cartReducer from './store/reducers/cart';
+import AppLoading from 'expo-app-loading';
+import * as Font from 'expo-font';
+import {composeWithDevTools} from 'redux-devtools-extension';
+
+const rootReducer = combineReducers({
+  products: productsReducer,
+  cart: cartReducer,
+});
+
+const store = createStore(rootReducer, composeWithDevTools());
+
+const fetchFonts = () => {
+  return Font.loadAsync({
+    'balsamiq-regular': require('./constants/fonts/Balsamiq_Sans/BalsamiqSans-Regular.ttf'),
+    'balsamiq-bold': require('./constants/fonts/Balsamiq_Sans/BalsamiqSans-Bold.ttf'),
+  });
+};
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+  const [fontsLoaded, setfontsLoaded] = useState(false);
+
+  if (!fontsLoaded) {
+    return (
+      <AppLoading
+        startAsync={fetchFonts}
+        onFinish={() => setfontsLoaded(true)}
+        onError={console.warn}
+      />
+    );
+  } else {
+    return (
+      <Provider store={store}>
+        <NavigationContainer>
+          <ShopNavigator />
+        </NavigationContainer>
+      </Provider>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
